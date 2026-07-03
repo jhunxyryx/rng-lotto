@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xyryx's Random Number Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            padding: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        .box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+            max-width: 500px;
+        }
+        .inputs {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+        }
+        .inputs label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .inputs input {
+            width: 60px;
+            padding: 5px;
+            font-size: 16px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        .numbers {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+        .average {
+            font-size: 20px;
+            color: #28a745;
+            margin-top: 10px;
+        }
+        /* NEW: Style for the generator badge */
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            margin-top: 15px;
+        }
+        .badge-math {
+            background-color: #ffc107; /* Yellow for Math.random */
+            color: #333;
+        }
+        .badge-crypto {
+            background-color: #6f42c1; /* Purple for Crypto */
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h1>🎲 Random Number Generator</h1>
+        
+        <div class="inputs">
+            <label>Max Number:</label>
+            <input type="number" id="inputA1" value="42" min="2">
+            <br>
+            <label style="margin-left: 15px;">Half Count:</label>
+            <input type="number" id="inputA2" value="3" min="1" max="5">
+            
+            <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                (This will generate <strong id="totalCountDisplay">6</strong> unique numbers)
+            </p>
+        </div>
+
+        <div class="numbers" id="numberDisplay">- - - - - -</div>
+        <div class="average" id="averageDisplay">Average: -</div>
+        
+        <!-- NEW: This badge will show which generator was used -->
+        <div id="generatorBadge" class="badge">Click Generate to start!</div>
+
+        <br>
+        <button onclick="generateAndShow()">Generate Numbers</button>
+    </div>
+
+    <script>
+        // ==========================================
+        // THIS IS THE JAVASCRIPT (The Brain of the page)
+        // ==========================================
+
+        // Update the "Total Count" text when the user types in the A2 box
+        document.getElementById("inputA2").addEventListener("input", function() {
+            let a2Value = Number(this.value);
+            if (a2Value > 5) {
+                this.value = 5;
+                a2Value = 5;
+            }
+            document.getElementById("totalCountDisplay").innerText = a2Value * 2;
+        });
+
+        // 1. NEW: Flip a coin using Crypto to pick 0 or 1
+        function pickGeneratorMode() {
+            const array = new Uint32Array(1);
+            window.crypto.getRandomValues(array);
+            // The "%" symbol means "remainder". Dividing by 2 always leaves a remainder of 0 or 1!
+            return array[0] % 2; 
+        }
+
+        // 2. NEW: The main random number function that chooses the tool based on the mode
+        function getNumber(min, max, mode) {
+            if (mode === 0) {
+                // Mode 0: Use regular Math.random()
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            } else {
+                // Mode 1: Use super-secure Crypto
+                const array = new Uint32Array(1);
+                window.crypto.getRandomValues(array);
+                return min + (array[0] % (max - min + 1));
+            }
+        }
+
+        // 3. The main function that does the Excel logic
+        function generateAndShow() {
+            const A1 = Number(document.getElementById("inputA1").value);
+            let A2 = Number(document.getElementById("inputA2").value);
+            
+            if (A2 > 5) {
+                A2 = 5;
+                document.getElementById("inputA2").value = 5;
+            }
+            
+            const totalNumbers = A2 * 2;
+
+            // SAFETY CHECK
+            if (A1 < totalNumbers) {
+                alert("Oops! The Max Number (A1) must be at least " + totalNumbers + " so we can pick " + totalNumbers + " unique numbers.");
+                return;
+            }
+
+            // Calculate B1, B2, and B3
+            const B1 = Math.round(A1 / 2); 
+            const step = Math.round(A1 / totalNumbers); 
+            const B2 = B1 + step; 
+            const B3 = B1 - step; 
+
+            // NEW: Pick our generator mode (0 or 1) for this round!
+            const mode = pickGeneratorMode();
+            
+            // Update the badge on the screen so we can see what happened
+            const badge = document.getElementById("generatorBadge");
+            if (mode === 0) {
+                badge.innerText = "🎲 Used: Math.random()";
+                badge.className = "badge badge-math";
+            } else {
+                badge.innerText = "🔒 Used: Crypto (Secure)";
+                badge.className = "badge badge-crypto";
+            }
+
+            let isValid = false;
+            let numbers = [];
+            let average = 0;
+
+            // 4. Keep trying until we find a perfect match
+            while (!isValid) {
+                numbers = [];
+                
+                // Generate random numbers using our chosen mode!
+                for (let i = 0; i < totalNumbers; i++) {
+                    numbers.push(getNumber(1, A1, mode));
+                }
+
+                // Check if all numbers are unique
+                const uniqueNumbers = new Set(numbers);
+                const allUnique = uniqueNumbers.size === totalNumbers;
+
+                if (allUnique) {
+                    // Calculate the average
+                    const sum = numbers.reduce((total, currentNumber) => total + currentNumber, 0);
+                    average = Math.round(sum / numbers.length);
+
+                    // Check if the average is between B3 and B2
+                    if (average >= B3 && average <= B2) {
+                        isValid = true; // We found a winner!
+                    }
+                }
+            }
+
+            // 5. SORT THE NUMBERS FROM LOW TO HIGH
+            numbers.sort((a, b) => a - b);
+
+            // 6. Show the results on the webpage!
+            document.getElementById("numberDisplay").innerText = numbers.join(", ");
+            document.getElementById("averageDisplay").innerText = "Average: " + average;
+        }
+    </script>
+
+</body>
+</html>
