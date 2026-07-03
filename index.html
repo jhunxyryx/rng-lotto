@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RNG Pro - Live Benchmark & Statistics</title>
+    <title>RNG Pro - Live Benchmark & Match Simulator</title>
     <!-- Google Fonts for modern typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,7 +76,7 @@
             transition: background 0.5s ease;
         }
 
-        /* Ambient background blobs to enhance glassmorphism */
+        /* Ambient background blobs */
         .bg-blobs {
             position: fixed;
             top: 0;
@@ -91,74 +91,74 @@
         .blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
+            filter: blur(90px);
+            opacity: 0.5;
             transition: background 0.5s ease;
         }
         
         .blob-1 {
-            top: 15%;
-            left: 10%;
-            width: 450px;
-            height: 450px;
+            top: 10%;
+            left: 5%;
+            width: 500px;
+            height: 500px;
             background: var(--blob-1);
-            animation: float1 15s infinite alternate;
+            animation: float1 18s infinite alternate;
         }
         
         .blob-2 {
-            bottom: 15%;
-            right: 10%;
-            width: 500px;
-            height: 500px;
+            bottom: 10%;
+            right: 5%;
+            width: 550px;
+            height: 550px;
             background: var(--blob-2);
-            animation: float2 15s infinite alternate;
+            animation: float2 18s infinite alternate;
         }
         
         @keyframes float1 {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.1); }
+            100% { transform: translate(70px, 50px) scale(1.15); }
         }
         
         @keyframes float2 {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-50px, -60px) scale(0.9); }
+            100% { transform: translate(-60px, -70px) scale(0.9); }
         }
 
-        /* Dashboard Flex Container */
+        /* Responsive Dashboard Grid Container */
         .dashboard-container {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
-            gap: 30px;
+            gap: 24px;
             justify-content: center;
             align-items: stretch;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1550px;
             z-index: 1;
         }
 
         /* Card Panels */
-        .box, .benchmark-card {
+        .box, .benchmark-card, .simulator-card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 40px 30px;
+            padding: 35px 25px;
             box-shadow: var(--shadow);
-            flex: 1 1 450px;
+            flex: 1 1 360px;
             display: flex;
             flex-direction: column;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .box {
-            max-width: 480px;
+            max-width: 420px;
             text-align: center;
         }
 
-        .benchmark-card {
-            max-width: 580px;
+        .benchmark-card, .simulator-card {
+            max-width: 520px;
         }
 
         /* Header Layout */
@@ -166,11 +166,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .header-row h1, .header-row h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             margin: 0;
             display: flex;
@@ -184,19 +184,25 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .header-row h2 {
+        .header-row h2.benchmark-title {
             background: linear-gradient(135deg, #10b981, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Theme Toggle Button */
+        .header-row h2.simulator-title {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Theme Toggle */
         .theme-toggle {
             background: var(--input-bg);
             border: 1px solid var(--input-border);
             color: var(--text-main);
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -214,8 +220,8 @@
         }
 
         .theme-toggle svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             stroke: var(--text-main);
             transition: all 0.3s ease;
         }
@@ -225,10 +231,10 @@
         .sun-icon { display: none; }
         .moon-icon { display: block; }
 
-        /* Quick Presets styling */
+        /* Lotto Presets Grid */
         .presets-label {
             text-align: left;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -239,8 +245,8 @@
         .presets-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 16px;
             justify-content: center;
         }
 
@@ -248,16 +254,16 @@
             background: var(--input-bg);
             border: 1px solid var(--input-border);
             color: var(--text-main);
-            padding: 10px 14px;
-            font-size: 14px;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 600;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             font-family: var(--font-family);
             outline: none;
-            flex: 1 1 calc(33.333% - 10px);
-            min-width: 100px;
+            flex: 1 1 calc(33.333% - 8px);
+            min-width: 90px;
             text-align: center;
         }
 
@@ -266,24 +272,19 @@
             color: white;
             border-color: transparent;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
         }
 
-        .preset-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Inputs box styling */
+        /* Inputs Grid */
         .inputs {
-            margin-bottom: 20px;
-            padding: 20px;
+            margin-bottom: 16px;
+            padding: 16px;
             background: var(--input-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 18px;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            transition: all 0.3s ease;
+            gap: 12px;
         }
 
         .input-row {
@@ -294,23 +295,23 @@
 
         .inputs label {
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-main);
         }
 
         .inputs input {
-            width: 80px;
-            padding: 8px 12px;
-            font-size: 16px;
+            width: 75px;
+            padding: 6px 10px;
+            font-size: 15px;
             text-align: center;
             background: var(--input-bg);
             color: var(--text-main);
             border: 1px solid var(--input-border);
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 600;
             font-family: var(--font-family);
             outline: none;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s ease;
         }
 
         .inputs input:focus {
@@ -318,7 +319,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        /* Flash animation for presets */
         @keyframes flash {
             0% { background-color: #3b82f6; color: white; border-color: transparent; }
             100% { background-color: var(--input-bg); color: var(--text-main); }
@@ -328,282 +328,26 @@
         }
 
         .info-text {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* Numbers display styling */
-        .numbers {
-            font-size: 32px;
-            font-weight: 800;
-            color: #3b82f6;
-            margin: 25px 0 15px 0;
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .average {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--average-text);
-            margin-bottom: 20px;
-        }
-
-        /* Stats display */
-        .stats-box {
-            margin-top: 20px;
-            padding: 18px;
-            background-color: var(--stats-bg);
-            border: 1px solid var(--stats-border);
-            border-radius: 16px;
-            font-size: 15px;
-            color: var(--stats-text);
-            line-height: 1.6;
-            text-align: left;
-            transition: all 0.3s ease;
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-        .stats-row:last-child {
-            margin-bottom: 0;
-            border-top: 1px dashed var(--stats-border);
-            padding-top: 6px;
-            margin-top: 6px;
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            color: white;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .badge-math {
-            background-color: #f59e0b;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
-        }
-        
-        .badge-crypto {
-            background-color: #8b5cf6;
-            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.25);
-        }
-
-        .badge-initial {
-            background-color: var(--text-muted);
-            opacity: 0.7;
-        }
-
-        /* Generate buttons */
-        .btn-generate {
-            width: 100%;
-            background: var(--btn-primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: 700;
-            border-radius: 14px;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: var(--font-family);
-            outline: none;
-        }
-
-        .btn-generate:hover {
-            background: var(--btn-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-generate:active {
-            transform: translateY(0);
-        }
-
-        /* ==========================================
-           BENCHMARK CARD STYLING
-           ========================================== */
-        .benchmark-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .control-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-        }
-
-        .control-row label {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-main);
-        }
-
-        .benchmark-select {
-            flex: 1;
-            padding: 10px 14px;
-            font-size: 14px;
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            font-weight: 600;
-            font-family: var(--font-family);
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .benchmark-select:focus {
-            border-color: var(--input-focus);
-        }
-
-        .btn-benchmark {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            padding: 11px 20px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: var(--font-family);
-            outline: none;
-        }
-
-        .btn-benchmark:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-benchmark:active {
-            transform: translateY(0);
-        }
-
-        .btn-benchmark:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        /* Custom Progress Bar styling */
-        .progress-container {
-            margin-bottom: 25px;
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .progress-container.active {
-            opacity: 1;
-            height: auto;
-            margin-bottom: 25px;
-        }
-
-        .progress-bar-bg {
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 6px;
-        }
-
-        .progress-bar-fill {
-            background: linear-gradient(90deg, #10b981, #3b82f6);
-            height: 100%;
-            width: 0%;
-            border-radius: 5px;
-            transition: width 0.15s ease;
-        }
-
-        .progress-text {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-align: right;
-        }
-
-        /* Stats Grid styling */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            padding: 14px;
-            border-radius: 16px;
-            text-align: center;
-        }
-
-        .stat-label {
             font-size: 12px;
-            font-weight: 700;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+            margin-top: 2px;
         }
 
-        .stat-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        /* Chart container styling */
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 280px;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 15px;
-            margin-top: auto;
-        }
-
-        /* ==========================================
-           ENTROPY COLLECTOR STYLING
-           ========================================== */
+        /* Touch Entropy Canvas drawing pad */
         .entropy-container {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             text-align: left;
         }
 
         .entropy-header {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         #entropyProgress {
@@ -613,10 +357,10 @@
 
         #entropyCanvas {
             width: 100%;
-            height: 90px;
+            height: 80px;
             background: var(--input-bg);
             border: 2px dashed var(--input-border);
-            border-radius: 14px;
+            border-radius: 12px;
             cursor: crosshair;
             touch-action: none;
             transition: all 0.3s ease;
@@ -625,25 +369,243 @@
         #entropyCanvas.ready {
             border-color: #8b5cf6;
             border-style: solid;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+        }
+
+        /* Displays */
+        .numbers {
+            font-size: 28px;
+            font-weight: 800;
+            color: #3b82f6;
+            margin: 18px 0 12px 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .average {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--average-text);
+            margin-bottom: 16px;
+        }
+
+        .stats-box {
+            margin-top: 16px;
+            padding: 14px;
+            background-color: var(--stats-bg);
+            border: 1px solid var(--stats-border);
+            border-radius: 14px;
+            font-size: 14px;
+            color: var(--stats-text);
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .stats-row:last-child {
+            margin-bottom: 0;
+            border-top: 1px dashed var(--stats-border);
+            padding-top: 5px;
+            margin-top: 5px;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            margin-top: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .badge-math {
+            background-color: #f59e0b;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+        }
+        
+        .badge-crypto {
+            background-color: #8b5cf6;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.2);
         }
 
         .badge-entropy {
             background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
-            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.25);
+        }
+
+        .badge-initial {
+            background-color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* Primary action button */
+        .btn-generate {
+            width: 100%;
+            background: var(--btn-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+            outline: none;
+        }
+
+        .btn-generate:hover {
+            background: var(--btn-hover);
+            transform: translateY(-2px);
         }
 
         /* ==========================================
-           LOTTERY ANALYTICS DASHBOARD
+           BENCHMARK CARD STYLING
            ========================================== */
-        .analytics-container {
-            margin-top: 20px;
-            padding: 18px;
+        .benchmark-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .control-row label {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-main);
+        }
+
+        .benchmark-select {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 13px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: var(--font-family);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-benchmark {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+            outline: none;
+        }
+
+        .btn-benchmark:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-benchmark:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .progress-container.active {
+            opacity: 1;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-bg {
             background: var(--input-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 18px;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.15s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .stat-value {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Benchmark stress test analytics */
+        .analytics-container {
+            margin-bottom: 20px;
+            padding: 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
             text-align: left;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: slideIn 0.4s ease-out;
         }
 
@@ -653,43 +615,43 @@
         }
 
         .analytics-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             border-bottom: 1px dashed var(--glass-border);
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
 
         .analytics-row-data {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .analytics-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--glass-border);
-            padding: 10px 6px;
-            border-radius: 12px;
+            padding: 8px 4px;
+            border-radius: 10px;
             text-align: center;
         }
 
         .analytics-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .analytics-vals {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 3px;
             justify-content: center;
         }
 
@@ -697,17 +659,408 @@
             background: var(--input-bg);
             border: 1px solid var(--input-border);
             color: var(--text-main);
-            padding: 3px 6px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 700;
             display: inline-flex;
             align-items: center;
-            gap: 2px;
+            gap: 1px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 10px;
+            margin-top: auto;
+        }
+
+        /* ==========================================
+           LOTTERY MATCH SIMULATOR STYLING
+           ========================================== */
+        .lotto-balls-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 16px 0;
+            min-height: 40px;
+        }
+
+        .lotto-ball {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #a855f7 0%, #6b21a8 100%);
+            color: white;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(107, 33, 168, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .simulator-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .btn-sim {
+            flex: 1;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            font-family: var(--font-family);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-sim-start {
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.2);
+        }
+        
+        .btn-sim-start:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-sim-pause {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
+        }
+        
+        .btn-sim-pause:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-sim-reset {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+        }
+        
+        .btn-sim-reset:hover {
+            background: var(--glass-border);
+            transform: translateY(-2px);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .speed-select {
+            padding: 5px 8px;
+            border-radius: 6px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            font-weight: 600;
+            font-family: var(--font-family);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .sim-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .sim-stat-card {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            padding: 8px 4px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .sim-stat-card.wide {
+            grid-column: span 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+        }
+
+        .sim-stat-card.wide .sim-stat-value {
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        .sim-stat-value {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        /* Match counters container */
+        .match-counters {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .match-counter-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 6px 2px;
+            text-align: center;
+        }
+
+        .match-counter-num {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .match-counter-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Console Log Terminal style */
+        .terminal-log {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #4ade80; /* Matrix terminal green */
+            height: 105px;
+            overflow-y: auto;
+            text-align: left;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+            margin-top: auto;
+        }
+
+        .terminal-log::-webkit-scrollbar {
+            width: 3px;
+        }
+        .terminal-log::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+
+        .log-entry {
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+        
+        .log-entry.match-3 { color: #60a5fa; }
+        .log-entry.match-4 { color: #facc15; font-weight: 600; }
+        .log-entry.match-5 { color: #fb923c; font-weight: 700; }
+        .log-entry.match-6 { color: #f43f5e; font-weight: 800; text-shadow: 0 0 8px #f43f5e; }
+
+        /* Confetti Canvas Overlay */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Advanced Constraints Accordion */
+        .advanced-accordion {
+            margin-top: 10px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--input-bg);
+            overflow: hidden;
+            text-align: left;
+        }
+        .advanced-accordion summary {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-main);
+            user-select: none;
+            outline: none;
+        }
+        .advanced-accordion[open] summary {
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .advanced-content {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .constraint-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .constraint-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+        }
+
+        /* Chart Tabs switcher */
+        .chart-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+        .chart-tab-btn {
+            flex: 1;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+        }
+        .chart-tab-btn.active {
+            background: var(--btn-primary);
+            color: white;
+        }
+
+        /* Ticket Wallet Container & Slips */
+        .wallet-container {
+            margin-top: 12px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        .wallet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .wallet-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .wallet-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        .wallet-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+        .wallet-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            padding: 8px 12px;
+            border-radius: 12px;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        }
+        .wallet-balls {
+            display: flex;
+            gap: 4px;
+        }
+        .wallet-ball {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #8b5cf6 0%, #5b21b6 100%);
+            color: white;
+            font-weight: 800;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .btn-remove-ticket {
+            background: transparent;
+            border: none;
+            color: #f43f5e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            outline: none;
+        }
+        .btn-remove-ticket:hover {
+            background: rgba(244, 63, 94, 0.1);
+        }
+        .btn-add-wallet {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+            outline: none;
+        }
+        .btn-add-wallet:hover {
+            background: var(--btn-primary);
+            color: white;
+            border-color: transparent;
+        }
+        .btn-add-wallet:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--input-bg);
+            color: var(--text-muted);
+            border-color: var(--input-border);
         }
     </style>
 </head>
 <body>
+    <canvas id="confettiCanvas"></canvas>
 
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
@@ -715,7 +1068,7 @@
     </div>
 
     <div class="dashboard-container">
-        <!-- LEFT PANEL: RNG Pro Control Panel -->
+        <!-- CARD 1: RNG Pro Single Generator -->
         <div class="box">
             <div class="header-row">
                 <h1>🎲 RNG Pro</h1>
@@ -745,9 +1098,32 @@
                 </div>
                 
                 <p class="info-text">
-                    (This will generate <strong id="totalCountDisplay">6</strong> unique numbers)
+                    (This will generate <strong id="totalCountDisplay">6</strong> <span id="uniqueText">unique</span> numbers)
                 </p>
             </div>
+
+            <!-- Advanced Constraints -->
+            <details class="advanced-accordion">
+                <summary>⚙️ Advanced Constraints</summary>
+                <div class="advanced-content">
+                    <div class="constraint-row">
+                        <label for="constraintOddEven">Force Balanced Odd/Even (50/50)</label>
+                        <input type="checkbox" id="constraintOddEven">
+                    </div>
+                    <div class="constraint-row">
+                        <label for="constraintLowHigh">Force Balanced Low/High (50/50)</label>
+                        <input type="checkbox" id="constraintLowHigh">
+                    </div>
+                    <div class="constraint-row">
+                        <label for="constraintConsecutive">Prevent Consecutive Numbers</label>
+                        <input type="checkbox" id="constraintConsecutive">
+                    </div>
+                    <div class="constraint-row">
+                        <label for="constraintDuplicates">Allow Duplicate Numbers</label>
+                        <input type="checkbox" id="constraintDuplicates">
+                    </div>
+                </div>
+            </details>
 
             <!-- Entropy Draw Pad -->
             <div class="entropy-container">
@@ -771,10 +1147,10 @@
             <button class="btn-generate" onclick="generateAndShow()">Generate Numbers</button>
         </div>
 
-        <!-- RIGHT PANEL: Live Benchmark & statistics -->
+        <!-- CARD 2: Stress Test Benchmark -->
         <div class="benchmark-card">
             <div class="header-row">
-                <h2>📊 Live Benchmark</h2>
+                <h2 class="benchmark-title">📊 Live Benchmark</h2>
             </div>
             
             <div class="benchmark-controls">
@@ -838,13 +1214,313 @@
             </div>
 
             <!-- Chart Canvas -->
+            <div class="chart-tabs">
+                <button class="chart-tab-btn active" id="tabAverages" onclick="switchChartTab('averages')">Averages</button>
+                <button class="chart-tab-btn" id="tabFrequency" onclick="switchChartTab('frequency')">Digit Frequency</button>
+            </div>
             <div class="chart-container">
                 <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- CARD 3: Lottery Match Simulator (Gamification) -->
+        <div class="simulator-card">
+            <div class="header-row">
+                <h2 class="simulator-title">🎮 Match Simulator</h2>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center;" class="presets-label">
+                <span>Target Ticket</span>
+                <span id="theoreticalOdds" style="text-transform: none; font-size: 11px; font-weight: 600; color: var(--text-muted);">Odds: -</span>
+            </div>
+            <div class="lotto-balls-container" id="targetTicketBalls">
+                <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;">Generate numbers first to play!</span>
+            </div>
+
+            <!-- Ticket Wallet -->
+            <div class="wallet-container">
+                <div class="wallet-header">
+                    <div class="presets-label" style="margin-bottom: 0;">Ticket Wallet (<span id="walletSize">0</span>/5)</div>
+                    <button class="btn-add-wallet" id="btnAddWallet" onclick="addCurrentTicketToWallet()" disabled>+ Add Ticket</button>
+                </div>
+                <div class="wallet-list" id="walletList">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 15px 0;" id="emptyWalletMsg">
+                        Wallet is empty. Play uses Target Ticket above.
+                      </div>
+                </div>
+            </div>
+
+            <div class="speed-control">
+                <span>Simulation Speed</span>
+                <select id="simSpeed" class="speed-select">
+                    <option value="500">Fast (500 draws/frame)</option>
+                    <option value="2500" selected>Turbo (2,500 draws/frame)</option>
+                    <option value="10000">Hyper (10,000 draws/frame)</option>
+                </select>
+            </div>
+
+            <div class="simulator-controls">
+                <button class="btn-sim btn-sim-start" id="btnSimStart" onclick="toggleSim()" disabled>Start Simulator</button>
+                <button class="btn-sim btn-sim-reset" id="btnSimReset" onclick="resetSim()" disabled>Reset</button>
+            </div>
+
+            <!-- Sim Stats Grid -->
+            <div class="sim-stats-grid">
+                <div class="sim-stat-card">
+                    <div class="stat-label">Draws Run</div>
+                    <div class="sim-stat-value" id="simDraws">0</div>
+                </div>
+                <div class="sim-stat-card">
+                    <div class="stat-label">Spent ($)</div>
+                    <div class="sim-stat-value" id="simSpent">$0</div>
+                </div>
+                <div class="sim-stat-card">
+                    <div class="stat-label">Won ($)</div>
+                    <div class="sim-stat-value" id="simWon">$0</div>
+                </div>
+                <div class="sim-stat-card">
+                    <div class="stat-label">Time Elapsed</div>
+                    <div class="sim-stat-value" id="simTimeElapsed">0 yrs</div>
+                </div>
+                <div class="sim-stat-card wide">
+                    <div class="stat-label">Net Profit / ROI</div>
+                    <div class="sim-stat-value" id="simROI">$0 (0.00%)</div>
+                </div>
+            </div>
+
+            <div class="presets-label">Matches Tracked</div>
+            <!-- Match Tier Counters -->
+            <div class="match-counters">
+                <div class="match-counter-card">
+                    <div class="match-counter-num" id="matchTier3">0</div>
+                    <div class="match-counter-label">3/6</div>
+                </div>
+                <div class="match-counter-card">
+                    <div class="match-counter-num" id="matchTier4">0</div>
+                    <div class="match-counter-label">4/6</div>
+                </div>
+                <div class="match-counter-card">
+                    <div class="match-counter-num" id="matchTier5">0</div>
+                    <div class="match-counter-label">5/6</div>
+                </div>
+                <div class="match-counter-card">
+                    <div class="match-counter-num" id="matchTier6">0</div>
+                    <div class="match-counter-label">6/6</div>
+                </div>
+            </div>
+
+            <!-- Retro Console Log Terminal -->
+            <div class="terminal-log" id="terminalLog">
+                <div class="log-entry">[System] Generate numbers in the panel on the left to lock in a lottery ticket.</div>
             </div>
         </div>
     </div>
 
     <script>
+        // ==========================================
+        // WEB AUDIO SYNTHESIZER (Native Audio API)
+        // ==========================================
+        const AudioHelper = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx && this.ctx.state === "suspended") {
+                    this.ctx.resume();
+                }
+            },
+            playTick() {
+                this.init();
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.05);
+            },
+            playChime() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                // Play a simple major chord arpeggio
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.08, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.3);
+                });
+            },
+            playMatch(tier) {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                let notes = [587.33, 880.00]; // D5, A5
+                let duration = 0.15;
+                let volume = 0.06;
+                if (tier === 4) { notes = [659.25, 987.77, 1318.51]; duration = 0.25; volume = 0.08; } // E5, B5, E6
+                else if (tier === 5) { notes = [880, 1100, 1320, 1760]; duration = 0.4; volume = 0.1; }
+                else if (tier === 6) { this.playJackpot(); return; }
+                
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                    gain.gain.setValueAtTime(volume, now + idx * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.06);
+                    osc.stop(now + idx * 0.06 + duration);
+                });
+            },
+            playJackpot() {
+                this.init();
+                if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00]; // C arpeggio going up high
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = "sawtooth"; // Retro game style
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.6);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.12);
+                    osc.stop(now + idx * 0.12 + 0.6);
+                });
+            },
+            oscDrawing: null,
+            gainDrawing: null,
+            startDrawingSound() {
+                this.init();
+                if (!this.ctx) return;
+                if (this.oscDrawing) return;
+                
+                this.oscDrawing = this.ctx.createOscillator();
+                this.gainDrawing = this.ctx.createGain();
+                
+                this.oscDrawing.type = "sine";
+                this.oscDrawing.frequency.setValueAtTime(100, this.ctx.currentTime);
+                this.gainDrawing.gain.setValueAtTime(0.0, this.ctx.currentTime);
+                
+                this.oscDrawing.connect(this.gainDrawing);
+                this.gainDrawing.connect(this.ctx.destination);
+                this.oscDrawing.start();
+            },
+            updateDrawingSound(x, y, speed = 1) {
+                if (!this.oscDrawing || !this.gainDrawing || !this.ctx) return;
+                // Map x to frequency (120Hz to 600Hz)
+                // Map speed to gain (max 0.03)
+                const freq = 120 + (x * 1.5) % 480;
+                const gainVal = Math.min(0.03, speed * 0.004);
+                this.oscDrawing.frequency.setTargetAtTime(freq, this.ctx.currentTime, 0.03);
+                this.gainDrawing.gain.setTargetAtTime(gainVal, this.ctx.currentTime, 0.02);
+            },
+            stopDrawingSound() {
+                if (!this.gainDrawing || !this.ctx) return;
+                this.gainDrawing.gain.setTargetAtTime(0.0, this.ctx.currentTime, 0.05);
+                setTimeout(() => {
+                    if (this.oscDrawing && this.gainDrawing.gain.value === 0.0) {
+                        try {
+                            this.oscDrawing.stop();
+                            this.oscDrawing.disconnect();
+                            this.gainDrawing.disconnect();
+                        } catch(e) {}
+                        this.oscDrawing = null;
+                        this.gainDrawing = null;
+                    }
+                }, 100);
+            }
+        };
+
+        // ==========================================
+        // CANVAS CONFETTI PARTICLE SYSTEM
+        // ==========================================
+        const Confetti = {
+            canvas: null,
+            ctx: null,
+            particles: [],
+            active: false,
+            init() {
+                this.canvas = document.getElementById("confettiCanvas");
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext("2d");
+                this.resize();
+                window.addEventListener("resize", () => this.resize());
+            },
+            resize() {
+                if (!this.canvas) return;
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            },
+            spawn() {
+                this.init();
+                this.particles = [];
+                this.active = true;
+                const colors = ["#ff0a54", "#ff477e", "#ff7096", "#ff85a1", "#fbb1bd", "#f9bec7", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
+                for (let i = 0; i < 150; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: this.canvas.height + Math.random() * 50,
+                        vx: (Math.random() - 0.5) * 8,
+                        vy: -Math.random() * 15 - 10,
+                        size: Math.random() * 6 + 4,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        rotation: Math.random() * 360,
+                        rotationSpeed: (Math.random() - 0.5) * 10
+                    });
+                }
+                this.loop();
+            },
+            loop() {
+                if (!this.active || !this.ctx || !this.canvas) return;
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                let alive = false;
+                for (let i = 0; i < this.particles.length; i++) {
+                    const p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.25; // gravity
+                    p.vx *= 0.98; // air resistance
+                    p.rotation += p.rotationSpeed;
+                    
+                    if (p.y < this.canvas.height + 20) {
+                        alive = true;
+                    }
+                    
+                    this.ctx.save();
+                    this.ctx.translate(p.x, p.y);
+                    this.ctx.rotate(p.rotation * Math.PI / 180);
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    this.ctx.restore();
+                }
+                
+                if (alive) {
+                    requestAnimationFrame(() => this.loop());
+                } else {
+                    this.active = false;
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+            }
+        };
+
         // ==========================================
         // THEME MANAGEMENT (Light / Dark Mode)
         // ==========================================
@@ -859,7 +1535,7 @@
             document.documentElement.setAttribute("data-theme", newTheme);
             localStorage.setItem("theme", newTheme);
             
-            // Dynamically update Chart styling to match theme colors
+            // Update Chart styling dynamically
             if (chartInstance) {
                 const isDark = newTheme === "dark";
                 const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
@@ -892,7 +1568,8 @@
         let isDrawing = false;
         let points = [];
         let collectedEntropyString = "";
-        const maxPoints = 50; // Points required for 100%
+        let maxPoints = 126; // Points required for 100%
+        
         
         function resizeCanvas() {
             if (!canvas) return;
@@ -962,13 +1639,19 @@
         
         requestAnimationFrame(drawTrail);
 
+        let lastX = null, lastY = null;
+
         canvas.addEventListener("mousedown", (e) => {
             isDrawing = true;
+            AudioHelper.startDrawingSound();
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
+            lastX = x;
+            lastY = y;
             trail.push({ x, y, age: 0 });
             addPoint(x, y);
+            AudioHelper.updateDrawingSound(x, y, 5);
         });
 
         canvas.addEventListener("mousemove", (e) => {
@@ -976,22 +1659,37 @@
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
+            const dx = x - (lastX || x);
+            const dy = y - (lastY || y);
+            const speed = Math.sqrt(dx*dx + dy*dy);
+            lastX = x;
+            lastY = y;
             trail.push({ x, y, age: 0 });
             addPoint(x, y);
+            AudioHelper.updateDrawingSound(x, y, speed);
         });
 
         window.addEventListener("mouseup", () => {
-            isDrawing = false;
+            if (isDrawing) {
+                isDrawing = false;
+                AudioHelper.stopDrawingSound();
+                lastX = null;
+                lastY = null;
+            }
         });
 
         canvas.addEventListener("touchstart", (e) => {
             isDrawing = true;
+            AudioHelper.startDrawingSound();
             const rect = canvas.getBoundingClientRect();
             const touch = e.touches[0];
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
+            lastX = x;
+            lastY = y;
             trail.push({ x, y, age: 0 });
             addPoint(x, y);
+            AudioHelper.updateDrawingSound(x, y, 5);
         });
 
         canvas.addEventListener("touchmove", (e) => {
@@ -1001,12 +1699,23 @@
             const touch = e.touches[0];
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
+            const dx = x - (lastX || x);
+            const dy = y - (lastY || y);
+            const speed = Math.sqrt(dx*dx + dy*dy);
+            lastX = x;
+            lastY = y;
             trail.push({ x, y, age: 0 });
             addPoint(x, y);
+            AudioHelper.updateDrawingSound(x, y, speed);
         }, { passive: false });
 
         canvas.addEventListener("touchend", () => {
-            isDrawing = false;
+            if (isDrawing) {
+                isDrawing = false;
+                AudioHelper.stopDrawingSound();
+                lastX = null;
+                lastY = null;
+            }
         });
 
         function resetEntropyPad() {
@@ -1017,6 +1726,22 @@
             canvas.classList.remove("ready");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
+
+        function updateMaxPoints() {
+            const inputA1Val = Number(document.getElementById("inputA1").value) || 0;
+            let inputA2Val = Number(document.getElementById("inputA2").value) || 0;
+            if (inputA2Val > 5) {
+                inputA2Val = 5;
+            }
+            maxPoints = Math.max(1, inputA1Val * inputA2Val);
+            resetEntropyPad();
+        }
+
+        document.getElementById("inputA1").addEventListener("input", updateMaxPoints);
+        document.getElementById("inputA2").addEventListener("input", updateMaxPoints);
+        
+        // Initialize maxPoints on load
+        updateMaxPoints();
 
         // ==========================================
         // PRESETS MANAGEMENT
@@ -1085,6 +1810,9 @@
             };
         }
 
+        let currentlyGeneratedNumbers = null;
+        let currentMaxRange = 42;
+
         async function generateAndShow() {
             const A1 = Number(document.getElementById("inputA1").value);
             let A2 = Number(document.getElementById("inputA2").value);
@@ -1095,14 +1823,15 @@
             }
             
             const totalNumbers = A2 * 2;
+            const allowDuplicates = document.getElementById("constraintDuplicates").checked;
 
-            if (A1 < totalNumbers) {
+            if (!allowDuplicates && A1 < totalNumbers) {
                 alert("Oops! The Max Number (A1) must be at least " + totalNumbers + " so we can pick " + totalNumbers + " unique numbers.");
                 return;
             }
 
             const B1 = Math.trunc(A1 / 2); 
-            const step = Math.round(A1 / (totalNumbers + 1)); 
+            const step = allowDuplicates ? (totalNumbers+1) : Math.round(A1 / (totalNumbers+1)); 
             const B2 = B1 + step; 
             const B3 = B1 - step; 
 
@@ -1112,7 +1841,7 @@
             const badge = document.getElementById("generatorBadge");
 
             if (isFingerEntropyReady) {
-                // Compute SHA-256 hash using the Web Crypto API
+                // Compute SHA-256 hash using Web Crypto API
                 const encoder = new TextEncoder();
                 const data = encoder.encode(collectedEntropyString);
                 const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
@@ -1141,6 +1870,10 @@
             let average = 0;
             let retryCount = 0;
 
+            const forceOddEven = document.getElementById("constraintOddEven").checked;
+            const forceLowHigh = document.getElementById("constraintLowHigh").checked;
+            const forceConsecutive = document.getElementById("constraintConsecutive").checked;
+
             // Keep trying until we find a perfect match
             while (!isValid) {
                 retryCount++;
@@ -1151,25 +1884,62 @@
                 }
 
                 const uniqueNumbers = new Set(numbers);
-                const allUnique = uniqueNumbers.size === totalNumbers;
+                const allUnique = allowDuplicates || (uniqueNumbers.size === totalNumbers);
 
                 if (allUnique) {
                     const sum = numbers.reduce((total, currentNumber) => total + currentNumber, 0);
                     average = Math.round(sum / numbers.length);
 
                     if (average >= B3 && average <= B2) {
-                        isValid = true; // We found a winner!
+                        let constraintsMet = true;
+
+                        // Check Odd/Even Balance
+                        if (forceOddEven) {
+                            const odd = numbers.filter(x => x % 2 !== 0).length;
+                            const target = Math.round(totalNumbers / 2);
+                            if (odd !== target) {
+                                constraintsMet = false;
+                            }
+                        }
+
+                        // Check Low/High Balance
+                        if (forceLowHigh && constraintsMet) {
+                            const low = numbers.filter(x => x <= B1).length;
+                            const target = Math.round(totalNumbers / 2);
+                            if (low !== target) {
+                                constraintsMet = false;
+                            }
+                        }
+
+                        // Check Consecutive Numbers
+                        if (forceConsecutive && constraintsMet) {
+                            const sortedNumbers = [...numbers].sort((a, b) => a - b);
+                            for (let i = 0; i < sortedNumbers.length - 1; i++) {
+                                if (sortedNumbers[i+1] - sortedNumbers[i] === 1) {
+                                    constraintsMet = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (constraintsMet) {
+                            isValid = true; // We found a winner!
+                        }
                     }
                 }
 
-                if (retryCount > 10000) {
-                    alert("Seeded generation took too many loops. Try swiping a different drawing pattern!");
+                if (retryCount > 200000) {
+                    alert("Seeded generation took too many loops. Try relaxing the constraints or swiping a different pattern!");
                     break;
                 }
             }
 
             // Sort numbers low to high
-            numbers.sort((a, b) => a - b);
+            allowDuplicates ? (a, b) => a - b : numbers.sort((a, b) => a - b);
+            
+            // Store reference for the match simulator
+            currentlyGeneratedNumbers = [...numbers];
+            currentMaxRange = A1;
 
             // Calculate stats
             let oddCount = 0;
@@ -1206,13 +1976,125 @@
             if (isFingerEntropyReady) {
                 resetEntropyPad();
             }
+
+            // Lock target ticket in the simulator panel
+            lockTargetTicket();
+            
+            // Enable ticket wallet additions
+            document.getElementById("btnAddWallet").disabled = false;
+            
+            // Play generation chime arpeggio
+            AudioHelper.playChime();
         }
 
         // ==========================================
         // BENCHMARKING & CHARTING LOGIC
         // ==========================================
+        // BENCHMARKING & CHARTING LOGIC
+        // ==========================================
         let chartInstance = null;
         let benchmarkInProgress = false;
+        let activeChartTab = 'averages';
+        let lastBenchmarkData = {
+            A1: 42,
+            allAveragesFreq: [],
+            acceptedAveragesFreq: [],
+            numberCounts: []
+        };
+
+        function switchChartTab(tab) {
+            if (activeChartTab === tab) return;
+            activeChartTab = tab;
+            
+            // Toggle active classes on tab buttons
+            document.getElementById("tabAverages").classList.toggle("active", tab === 'averages');
+            document.getElementById("tabFrequency").classList.toggle("active", tab === 'frequency');
+            
+            // Redraw chart with active tab data
+            renderChartForTab();
+        }
+
+        function renderChartForTab() {
+            if (!chartInstance) return;
+            
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
+            
+            if (activeChartTab === 'averages') {
+                // Config line chart
+                chartInstance.config.type = 'line';
+                
+                const labels = [];
+                const allData = [];
+                const acceptedData = [];
+                const A1 = lastBenchmarkData.A1;
+                
+                for (let i = 1; i <= A1; i++) {
+                    labels.push(i);
+                    allData.push(lastBenchmarkData.allAveragesFreq[i] || 0);
+                    acceptedData.push(lastBenchmarkData.acceptedAveragesFreq[i] || 0);
+                }
+                
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets = [
+                    {
+                        label: 'All Candidate Averages',
+                        data: allData,
+                        borderColor: '#10b981',
+                        borderWidth: 2.5,
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    },
+                    {
+                        label: 'Accepted Averages (Target Region)',
+                        data: acceptedData,
+                        borderColor: '#3b82f6',
+                        borderWidth: 2.5,
+                        backgroundColor: 'rgba(59, 130, 246, 0.35)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }
+                ];
+                
+                chartInstance.options.scales.x.title.text = 'Average Value';
+                chartInstance.options.scales.y.title.text = 'Frequency (Hits)';
+            } else {
+                // Config bar chart
+                chartInstance.config.type = 'bar';
+                
+                const labels = [];
+                const freqData = [];
+                const A1 = lastBenchmarkData.A1;
+                
+                for (let i = 1; i <= A1; i++) {
+                    labels.push(i);
+                    freqData.push(lastBenchmarkData.numberCounts[i] || 0);
+                }
+                
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets = [
+                    {
+                        label: 'Digit Hits',
+                        data: freqData,
+                        borderColor: '#8b5cf6',
+                        borderWidth: 1.5,
+                        backgroundColor: 'rgba(139, 92, 246, 0.55)',
+                        borderRadius: 4
+                    }
+                ];
+                
+                chartInstance.options.scales.x.title.text = 'Number Digit';
+                chartInstance.options.scales.y.title.text = 'Draw Count (Hits)';
+            }
+            
+            chartInstance.update('none');
+        }
 
         function initChart() {
             const ctx = document.getElementById('distributionChart').getContext('2d');
@@ -1304,38 +2186,13 @@
             });
         }
 
-        function updateChartData(A1, allFreq, acceptedFreq) {
-            const labels = [];
-            const allData = [];
-            const acceptedData = [];
+        function updateChartData(A1, allFreq, acceptedFreq, numberCounts) {
+            lastBenchmarkData.A1 = A1;
+            lastBenchmarkData.allAveragesFreq = [...allFreq];
+            lastBenchmarkData.acceptedAveragesFreq = [...acceptedFreq];
+            lastBenchmarkData.numberCounts = [...numberCounts];
             
-            for (let i = 1; i <= A1; i++) {
-                labels.push(i);
-                allData.push(allFreq[i]);
-                acceptedData.push(acceptedFreq[i]);
-            }
-            
-            chartInstance.data.labels = labels;
-            chartInstance.data.datasets[0].data = allData;
-            
-            // Add/update second series for the filtered/accepted averages (hump)
-            if (chartInstance.data.datasets.length < 2) {
-                chartInstance.data.datasets.push({
-                    label: 'Accepted Averages (Target Region)',
-                    data: acceptedData,
-                    borderColor: '#3b82f6',
-                    borderWidth: 2.5,
-                    backgroundColor: 'rgba(59, 130, 246, 0.35)',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 4
-                });
-            } else {
-                chartInstance.data.datasets[1].data = acceptedData;
-            }
-            
-            chartInstance.update('none'); // Update immediately without animation triggers for speed
+            renderChartForTab();
         }
 
         function runBenchmark() {
@@ -1350,13 +2207,14 @@
             }
             
             const totalNumbers = A2 * 2;
+            const allowDuplicates = document.getElementById("constraintDuplicates").checked;
 
-            if (A1 < totalNumbers) {
+            if (!allowDuplicates && A1 < totalNumbers) {
                 alert("Oops! The Max Number (A1) must be at least " + totalNumbers + " so we can pick " + totalNumbers + " unique numbers.");
                 return;
             }
 
-            const B1 = Math.trunc(A1 / 2); 
+            const B1 = allowDuplicates ? A1 : Math.trunc(A1 / 2); 
             const step = Math.round(A1 / (totalNumbers + 1)); 
             const B2 = B1 + step; 
             const B3 = B1 - step; 
@@ -1367,7 +2225,6 @@
             document.getElementById("startBenchmarkBtn").innerText = "Simulating...";
             document.getElementById("progressContainer").classList.add("active");
             
-            // Hide previous analytics
             document.getElementById("analyticsContainer").style.display = "none";
             
             const totalRuns = Number(document.getElementById("benchmarkRuns").value);
@@ -1376,16 +2233,14 @@
             let maxRetries = 0;
             let totalCandidates = 0;
             
-            // Track frequencies of candidate averages and accepted averages
             const allAveragesFreq = Array(A1 + 1).fill(0);
             const acceptedAveragesFreq = Array(A1 + 1).fill(0);
             
-            // Track frequency and last seen index of each individual number (1 to A1)
             const numberCounts = Array(A1 + 1).fill(0);
             const numberLastSeen = Array(A1 + 1).fill(-1);
             
             const startTime = performance.now();
-            const chunkSize = Math.max(10, Math.floor(totalRuns / 25)); // Run in 25 ticks to give smooth UI feedback
+            const chunkSize = Math.max(10, Math.floor(totalRuns / 25));
 
             function runChunk() {
                 const chunkEnd = Math.min(currentRun + chunkSize, totalRuns);
@@ -1405,13 +2260,12 @@
                         }
                         
                         const uniqueNumbers = new Set(numbers);
-                        const allUnique = uniqueNumbers.size === totalNumbers;
+                        const allUnique = allowDuplicates || (uniqueNumbers.size === totalNumbers);
                         
                         if (allUnique) {
                             const sum = numbers.reduce((total, cur) => total + cur, 0);
                             const avg = Math.round(sum / numbers.length);
                             
-                            // Log all unique candidate averages
                             if (avg >= 1 && avg <= A1) {
                                 allAveragesFreq[avg]++;
                             }
@@ -1420,7 +2274,6 @@
                                 isValid = true;
                                 acceptedAveragesFreq[avg]++;
                                 
-                                // Track individual numbers drawn
                                 for (let j = 0; j < numbers.length; j++) {
                                     const num = numbers[j];
                                     numberCounts[num]++;
@@ -1436,32 +2289,26 @@
                     }
                 }
                 
-                // Update stats UI
                 const elapsed = performance.now() - startTime;
                 document.getElementById("statTime").innerText = Math.round(elapsed) + " ms";
                 document.getElementById("statAvgRetries").innerText = (totalRetries / currentRun).toFixed(2);
                 document.getElementById("statMaxRetries").innerText = maxRetries;
                 document.getElementById("statTotalDraws").innerText = totalCandidates.toLocaleString();
                 
-                // Update Progress bar
                 const pct = Math.round((currentRun / totalRuns) * 100);
                 document.getElementById("progressBarFill").style.width = pct + "%";
                 document.getElementById("progressText").innerText = `Progress: ${currentRun.toLocaleString()} / ${totalRuns.toLocaleString()} (${pct}%)`;
                 
-                // Refresh chart distribution data
-                updateChartData(A1, allAveragesFreq, acceptedAveragesFreq);
+                updateChartData(A1, allAveragesFreq, acceptedAveragesFreq, numberCounts);
 
                 if (currentRun < totalRuns) {
-                    // Feed control back to browser thread to keep UI smooth
                     requestAnimationFrame(runChunk);
                 } else {
-                    // Benchmark completed
                     benchmarkInProgress = false;
                     document.getElementById("startBenchmarkBtn").disabled = false;
                     document.getElementById("startBenchmarkBtn").innerText = "Run Stress Test";
                     document.getElementById("progressText").innerText = "Stress Test Completed!";
                     
-                    // Compile stats for Hot, Cold, and Overdue Numbers
                     const numStats = [];
                     for (let i = 1; i <= A1; i++) {
                         const count = numberCounts[i];
@@ -1488,8 +2335,340 @@
                 }
             }
             
-            // Begin loop
             requestAnimationFrame(runChunk);
+        }
+
+        // ==========================================
+        // LOTTERY MATCH SIMULATOR GAMEPLAY LOGIC
+        // ==========================================
+        let simRunning = false;
+        let simDrawsCount = 0;
+        let simWonAmount = 0;
+        let savedWalletTickets = [];
+        
+        let matchTiers = {
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0
+        };
+        
+        let targetTicketSet = null;
+        let simAnimationId = null;
+
+        // Combinations calculator
+        function combinations(n, k) {
+            if (k < 0 || k > n) return 0;
+            if (k === 0 || k === n) return 1;
+            if (k === 1) return n;
+            let prod = 1;
+            for (let i = 1; i <= k; i++) {
+                prod = prod * (n - k + i) / i;
+            }
+            return Math.round(prod);
+        }
+
+        // Terminal Log helper
+        const terminalLog = document.getElementById("terminalLog");
+        
+        function logToTerminal(message, className = "") {
+            const entry = document.createElement("div");
+            entry.className = "log-entry " + className;
+            entry.innerText = message;
+            terminalLog.appendChild(entry);
+            terminalLog.scrollTop = terminalLog.scrollHeight;
+        }
+
+        // Lock in ticket numbers and generate balls
+        function lockTargetTicket() {
+            if (!currentlyGeneratedNumbers || currentlyGeneratedNumbers.length === 0) return;
+            
+            targetTicketSet = new Set(currentlyGeneratedNumbers);
+            
+            const ballsContainer = document.getElementById("targetTicketBalls");
+            ballsContainer.innerHTML = "";
+            
+            currentlyGeneratedNumbers.forEach((num, index) => {
+                const ball = document.createElement("span");
+                ball.className = "lotto-ball";
+                ball.style.animationDelay = `${index * 0.08}s`;
+                ball.innerText = num;
+                ballsContainer.appendChild(ball);
+            });
+            
+            // Calculate and show theoretical odds
+            const totalNumbers = targetTicketSet.size;
+            const totalCombinations = combinations(currentMaxRange, totalNumbers);
+            document.getElementById("theoreticalOdds").innerText = "Odds: 1 in " + totalCombinations.toLocaleString();
+            
+            // Enable controls
+            document.getElementById("btnSimStart").disabled = false;
+            document.getElementById("btnSimReset").disabled = false;
+            
+            resetSim();
+            logToTerminal(`[System] Locked in new target ticket: ${currentlyGeneratedNumbers.join(", ")} (Max: ${currentMaxRange}). Ready to play!`);
+        }
+
+        // Wallet management functions
+        function addCurrentTicketToWallet() {
+            if (!currentlyGeneratedNumbers || currentlyGeneratedNumbers.length === 0) return;
+            if (savedWalletTickets.length >= 5) {
+                alert("Wallet is full! Remove a ticket to add a new one.");
+                return;
+            }
+            
+            const ticketStr = currentlyGeneratedNumbers.join(",");
+            const duplicate = savedWalletTickets.some(t => t.join(",") === ticketStr);
+            if (duplicate) {
+                alert("This ticket is already in your wallet!");
+                return;
+            }
+            
+            savedWalletTickets.push([...currentlyGeneratedNumbers]);
+            renderWallet();
+            AudioHelper.playTick();
+            
+            logToTerminal(`[System] Added ticket to wallet: ${currentlyGeneratedNumbers.join(", ")}`);
+            resetSim(); // Reset simulator to prepare for multi-ticket run
+        }
+
+        function removeWalletTicket(index) {
+            const removed = savedWalletTickets.splice(index, 1)[0];
+            renderWallet();
+            AudioHelper.playTick();
+            logToTerminal(`[System] Removed ticket from wallet: ${removed.join(", ")}`);
+            resetSim(); // Reset simulator to account for ticket removal
+        }
+
+        function renderWallet() {
+            const walletList = document.getElementById("walletList");
+            const walletSize = document.getElementById("walletSize");
+            const emptyWalletMsg = document.getElementById("emptyWalletMsg");
+            
+            walletSize.innerText = savedWalletTickets.length;
+            walletList.innerHTML = "";
+            
+            if (savedWalletTickets.length === 0) {
+                emptyWalletMsg.style.display = "block";
+                walletList.appendChild(emptyWalletMsg);
+            } else {
+                emptyWalletMsg.style.display = "none";
+                savedWalletTickets.forEach((ticket, idx) => {
+                    const item = document.createElement("div");
+                    item.className = "wallet-item";
+                    
+                    const ballsContainer = document.createElement("div");
+                    ballsContainer.className = "wallet-balls";
+                    
+                    ticket.forEach(num => {
+                        const ball = document.createElement("span");
+                        ball.className = "wallet-ball";
+                        ball.innerText = num;
+                        ballsContainer.appendChild(ball);
+                    });
+                    
+                    const removeBtn = document.createElement("button");
+                    removeBtn.className = "btn-remove-ticket";
+                    removeBtn.innerHTML = `
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    `;
+                    removeBtn.onclick = () => removeWalletTicket(idx);
+                    
+                    item.appendChild(ballsContainer);
+                    item.appendChild(removeBtn);
+                    walletList.appendChild(item);
+                });
+            }
+        }
+
+        // Start/Stop Toggle
+        function toggleSim() {
+            if (!targetTicketSet && savedWalletTickets.length === 0) return;
+            
+            const btn = document.getElementById("btnSimStart");
+            
+            if (simRunning) {
+                // Pause
+                simRunning = false;
+                cancelAnimationFrame(simAnimationId);
+                btn.innerText = "Resume Simulation";
+                btn.className = "btn-sim btn-sim-start";
+                logToTerminal(`[System] Simulation paused at ${simDrawsCount.toLocaleString()} draws.`);
+            } else {
+                // Start
+                simRunning = true;
+                btn.innerText = "Pause Simulation";
+                btn.className = "btn-sim btn-sim-pause";
+                logToTerminal(`[System] Launching simulation at turbo speed...`);
+                simAnimationId = requestAnimationFrame(simulationLoop);
+            }
+        }
+
+        // Reset Simulator
+        function resetSim() {
+            simRunning = false;
+            cancelAnimationFrame(simAnimationId);
+            
+            simDrawsCount = 0;
+            simWonAmount = 0;
+            matchTiers = { 3: 0, 4: 0, 5: 0, 6: 0 };
+            
+            // Update UI elements
+            document.getElementById("simDraws").innerText = "0";
+            document.getElementById("simSpent").innerText = "$0";
+            document.getElementById("simWon").innerText = "$0";
+            document.getElementById("simTimeElapsed").innerText = "0 yrs";
+            document.getElementById("simROI").innerText = "$0 (0.00%)";
+            document.getElementById("simROI").style.color = "inherit";
+            
+            document.getElementById("matchTier3").innerText = "0";
+            document.getElementById("matchTier4").innerText = "0";
+            document.getElementById("matchTier5").innerText = "0";
+            document.getElementById("matchTier6").innerText = "0";
+            
+            const startBtn = document.getElementById("btnSimStart");
+            startBtn.innerText = "Start Simulation";
+            startBtn.disabled = !targetTicketSet && savedWalletTickets.length === 0;
+            startBtn.className = "btn-sim btn-sim-start";
+            
+            const ticketText = savedWalletTickets.length > 0 
+                ? `${savedWalletTickets.length} tickets from wallet` 
+                : `Target Ticket: ${targetTicketSet ? [...targetTicketSet].join(", ") : '-'}`;
+            terminalLog.innerHTML = `<div class="log-entry">[System] Simulator reset. Ready to draw against ${ticketText}</div>`;
+        }
+
+        // The simulation loop
+        function simulationLoop() {
+            if (!simRunning) return;
+            
+            const speed = Number(document.getElementById("simSpeed").value);
+            const totalNumbers = targetTicketSet ? targetTicketSet.size : 6;
+            
+            const useWallet = savedWalletTickets.length > 0;
+            const ticketsToCompare = useWallet 
+                ? savedWalletTickets.map(t => new Set(t)) 
+                : [targetTicketSet];
+            
+            let jackpotHit = false;
+            let jackpotDetails = null;
+            
+            for (let i = 0; i < speed; i++) {
+                simDrawsCount++;
+                
+                // Draw a set of random numbers from 1 to currentMaxRange (mode 0 is Math.random)
+                const numbers = [];
+                for (let k = 0; k < totalNumbers; k++) {
+                    numbers.push(getNumber(1, currentMaxRange, 0));
+                }
+                
+                // Filter uniqueness
+                const uniqueNumbers = new Set(numbers);
+                if (uniqueNumbers.size !== totalNumbers) {
+                    // Invalid draw (duplicates), standard lotteries redraw. We do not count this.
+                    simDrawsCount--; 
+                    continue;
+                }
+                
+                // Compare matches against all active tickets
+                ticketsToCompare.forEach((ticketSet, ticketIdx) => {
+                    let matchesCount = 0;
+                    numbers.forEach(num => {
+                        if (ticketSet.has(num)) {
+                            matchesCount++;
+                        }
+                    });
+                    
+                    // Record matches and payouts
+                    if (matchesCount >= 3) {
+                        if (matchesCount === 3) {
+                            matchTiers[3]++;
+                            simWonAmount += 5;
+                            if (matchTiers[3] === 1) {
+                                logToTerminal(`[Match] Draw #${simDrawsCount.toLocaleString()}: First 3/6 Match! Won $5.`, "match-3");
+                                AudioHelper.playMatch(3);
+                            }
+                        } else if (matchesCount === 4) {
+                            matchTiers[4]++;
+                            simWonAmount += 100;
+                            logToTerminal(`[Match] Draw #${simDrawsCount.toLocaleString()}: Matched 4/6! Won $100.`, "match-4");
+                            AudioHelper.playMatch(4);
+                        } else if (matchesCount === 5) {
+                            matchTiers[5]++;
+                            simWonAmount += 2000;
+                            logToTerminal(`[Match] Draw #${simDrawsCount.toLocaleString()}: Matched 5/6! Won $2,000.`, "match-5");
+                            AudioHelper.playMatch(5);
+                        } else if (matchesCount === 6) {
+                            matchTiers[6]++;
+                            simWonAmount += 10000000;
+                            const tArr = useWallet ? savedWalletTickets[ticketIdx] : [...targetTicketSet];
+                            logToTerminal(`[JACKPOT] Draw #${simDrawsCount.toLocaleString()}: MATCHED 6/6 JACKPOT! Ticket [${tArr.join(", ")}] Won $10,000,000!`, "match-6");
+                            
+                            jackpotHit = true;
+                            jackpotDetails = { draw: simDrawsCount, ticket: tArr };
+                        }
+                    }
+                });
+                
+                if (jackpotHit) break;
+            }
+            
+            updateSimUI();
+            
+            if (jackpotHit) {
+                // Stop simulation on jackpot win!
+                simRunning = false;
+                cancelAnimationFrame(simAnimationId);
+                document.getElementById("btnSimStart").innerText = "JACKPOT WIN!";
+                document.getElementById("btnSimStart").disabled = true;
+                
+                // Confetti blast and jackpot tune!
+                Confetti.spawn();
+                AudioHelper.playJackpot();
+                
+                alert(`🎉 OMG! You hit the Jackpot in ${jackpotDetails.draw.toLocaleString()} draws! Winning ticket: ${jackpotDetails.ticket.join(", ")}`);
+                return;
+            }
+            
+            if (simRunning) {
+                simAnimationId = requestAnimationFrame(simulationLoop);
+            }
+        }
+
+        // Render Sim UI values
+        function updateSimUI() {
+            const ticketCount = savedWalletTickets.length > 0 ? savedWalletTickets.length : 1;
+            const spent = simDrawsCount * 2 * ticketCount;
+            const netProfit = simWonAmount - spent;
+            
+            let roi = 0;
+            if (spent > 0) {
+                roi = (netProfit / spent) * 100;
+            }
+            
+            // Calculate time: assuming 2 draws per week (104 draws per year)
+            const years = (simDrawsCount / 104).toFixed(1);
+            
+            document.getElementById("simDraws").innerText = simDrawsCount.toLocaleString();
+            document.getElementById("simSpent").innerText = "$" + spent.toLocaleString();
+            document.getElementById("simWon").innerText = "$" + simWonAmount.toLocaleString();
+            document.getElementById("simTimeElapsed").innerText = Number(years).toLocaleString() + " yrs";
+            
+            const roiField = document.getElementById("simROI");
+            roiField.innerText = `$${netProfit.toLocaleString()} (${roi.toFixed(2)}%)`;
+            
+            if (netProfit < 0) {
+                roiField.style.color = "#f43f5e"; // red profit
+            } else {
+                roiField.style.color = "#10b981"; // green profit
+            }
+            
+            document.getElementById("matchTier3").innerText = matchTiers[3].toLocaleString();
+            document.getElementById("matchTier4").innerText = matchTiers[4].toLocaleString();
+            document.getElementById("matchTier5").innerText = matchTiers[5].toLocaleString();
+            document.getElementById("matchTier6").innerText = matchTiers[6].toLocaleString();
         }
 
         // Initialize Chart on DOM Load
