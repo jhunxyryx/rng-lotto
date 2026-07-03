@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xyryx's Random Number Generator</title>
+    <title>RNG Pro - Live Benchmark & Statistics</title>
     <!-- Google Fonts for modern typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN for distribution charting -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         :root {
@@ -68,7 +71,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
             overflow-x: hidden;
             transition: background 0.5s ease;
         }
@@ -95,18 +98,18 @@
         
         .blob-1 {
             top: 15%;
-            left: 15%;
-            width: 350px;
-            height: 350px;
+            left: 10%;
+            width: 450px;
+            height: 450px;
             background: var(--blob-1);
             animation: float1 15s infinite alternate;
         }
         
         .blob-2 {
             bottom: 15%;
-            right: 15%;
-            width: 400px;
-            height: 400px;
+            right: 10%;
+            width: 500px;
+            height: 500px;
             background: var(--blob-2);
             animation: float2 15s infinite alternate;
         }
@@ -121,8 +124,21 @@
             100% { transform: translate(-50px, -60px) scale(0.9); }
         }
 
-        /* Glassmorphic Container */
-        .box {
+        /* Dashboard Flex Container */
+        .dashboard-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1100px;
+            z-index: 1;
+        }
+
+        /* Card Panels */
+        .box, .benchmark-card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -130,10 +146,19 @@
             border-radius: 24px;
             padding: 40px 30px;
             box-shadow: var(--shadow);
-            width: 100%;
+            flex: 1 1 450px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .box {
             max-width: 480px;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .benchmark-card {
+            max-width: 580px;
         }
 
         /* Header Layout */
@@ -144,18 +169,28 @@
             margin-bottom: 25px;
         }
 
-        .header-row h1 {
+        .header-row h1, .header-row h2 {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* Sleek Theme Toggle Button */
+        .header-row h1 {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-row h2 {
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Theme Toggle Button */
         .theme-toggle {
             background: var(--input-bg);
             border: 1px solid var(--input-border);
@@ -190,7 +225,7 @@
         .sun-icon { display: none; }
         .moon-icon { display: block; }
 
-        /* Quick Presets Grid */
+        /* Quick Presets styling */
         .presets-label {
             text-align: left;
             font-size: 13px;
@@ -238,7 +273,7 @@
             transform: translateY(0);
         }
 
-        /* Inputs Box styling */
+        /* Inputs box styling */
         .inputs {
             margin-bottom: 20px;
             padding: 20px;
@@ -283,7 +318,7 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        /* Flash animation for preset click */
+        /* Flash animation for presets */
         @keyframes flash {
             0% { background-color: #3b82f6; color: white; border-color: transparent; }
             100% { background-color: var(--input-bg); color: var(--text-main); }
@@ -298,7 +333,7 @@
             margin-top: 4px;
         }
 
-        /* Numbers Display styling */
+        /* Numbers display styling */
         .numbers {
             font-size: 32px;
             font-weight: 800;
@@ -316,7 +351,7 @@
             margin-bottom: 20px;
         }
 
-        /* Stats Box */
+        /* Stats display */
         .stats-box {
             margin-top: 20px;
             padding: 18px;
@@ -369,7 +404,7 @@
             opacity: 0.7;
         }
 
-        /* Primary Action Button */
+        /* Generate buttons */
         .btn-generate {
             width: 100%;
             background: var(--btn-primary);
@@ -396,6 +431,280 @@
         .btn-generate:active {
             transform: translateY(0);
         }
+
+        /* ==========================================
+           BENCHMARK CARD STYLING
+           ========================================== */
+        .benchmark-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .control-row label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .benchmark-select {
+            flex: 1;
+            padding: 10px 14px;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: var(--font-family);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .benchmark-select:focus {
+            border-color: var(--input-focus);
+        }
+
+        .btn-benchmark {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: var(--font-family);
+            outline: none;
+        }
+
+        .btn-benchmark:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-benchmark:active {
+            transform: translateY(0);
+        }
+
+        .btn-benchmark:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Custom Progress Bar styling */
+        .progress-container {
+            margin-bottom: 25px;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .progress-container.active {
+            opacity: 1;
+            height: auto;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-bg {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.15s ease;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        /* Stats Grid styling */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            padding: 14px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Chart container styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 15px;
+            margin-top: auto;
+        }
+
+        /* ==========================================
+           ENTROPY COLLECTOR STYLING
+           ========================================== */
+        .entropy-container {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .entropy-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        #entropyProgress {
+            color: #8b5cf6;
+            transition: all 0.3s ease;
+        }
+
+        #entropyCanvas {
+            width: 100%;
+            height: 90px;
+            background: var(--input-bg);
+            border: 2px dashed var(--input-border);
+            border-radius: 14px;
+            cursor: crosshair;
+            touch-action: none;
+            transition: all 0.3s ease;
+        }
+
+        #entropyCanvas.ready {
+            border-color: #8b5cf6;
+            border-style: solid;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .badge-entropy {
+            background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+        }
+
+        /* ==========================================
+           LOTTERY ANALYTICS DASHBOARD
+           ========================================== */
+        .analytics-container {
+            margin-top: 20px;
+            padding: 18px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            text-align: left;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .analytics-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed var(--glass-border);
+            padding-bottom: 6px;
+        }
+
+        .analytics-row-data {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .analytics-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 10px 6px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .analytics-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .analytics-vals {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .number-badge {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            padding: 3px 6px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
     </style>
 </head>
 <body>
@@ -405,50 +714,134 @@
         <div class="blob blob-2"></div>
     </div>
 
-    <div class="box">
-        <div class="header-row">
-            <h1>🎲 RNG Pro</h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
-                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-            </button>
-        </div>
-        
-        <div class="presets-label">Lotto Presets</div>
-        <div class="presets-container">
-            <button class="preset-btn" onclick="applyPreset(42, 3)">6/42 Preset</button>
-            <button class="preset-btn" onclick="applyPreset(45, 3)">6/45 Preset</button>
-            <button class="preset-btn" onclick="applyPreset(49, 3)">6/49 Preset</button>
-            <button class="preset-btn" onclick="applyPreset(55, 3)">6/55 Preset</button>
-            <button class="preset-btn" onclick="applyPreset(58, 3)">6/58 Preset</button>
-        </div>
-
-        <div class="inputs">
-            <div class="input-row">
-                <label for="inputA1">Max Number:</label>
-                <input type="number" id="inputA1" value="42" min="2">
-            </div>
-            <div class="input-row">
-                <label for="inputA2">Half Count:</label>
-                <input type="number" id="inputA2" value="3" min="1" max="5">
+    <div class="dashboard-container">
+        <!-- LEFT PANEL: RNG Pro Control Panel -->
+        <div class="box">
+            <div class="header-row">
+                <h1>🎲 RNG Pro</h1>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
             </div>
             
-            <p class="info-text">
-                (This will generate <strong id="totalCountDisplay">6</strong> unique numbers)
-            </p>
+            <div class="presets-label">Lotto Presets</div>
+            <div class="presets-container">
+                <button class="preset-btn" onclick="applyPreset(42, 3)">6/42 Preset</button>
+                <button class="preset-btn" onclick="applyPreset(45, 3)">6/45 Preset</button>
+                <button class="preset-btn" onclick="applyPreset(49, 3)">6/49 Preset</button>
+                <button class="preset-btn" onclick="applyPreset(55, 3)">6/55 Preset</button>
+                <button class="preset-btn" onclick="applyPreset(58, 3)">6/58 Preset</button>
+            </div>
+
+            <div class="inputs">
+                <div class="input-row">
+                    <label for="inputA1">Max Number:</label>
+                    <input type="number" id="inputA1" value="42" min="2">
+                </div>
+                <div class="input-row">
+                    <label for="inputA2">Half Count:</label>
+                    <input type="number" id="inputA2" value="3" min="1" max="5">
+                </div>
+                
+                <p class="info-text">
+                    (This will generate <strong id="totalCountDisplay">6</strong> unique numbers)
+                </p>
+            </div>
+
+            <!-- Entropy Draw Pad -->
+            <div class="entropy-container">
+                <div class="entropy-header">
+                    <span>✍️ Entropy Pad (Swipe / Draw)</span>
+                    <span id="entropyProgress">0%</span>
+                </div>
+                <canvas id="entropyCanvas"></canvas>
+            </div>
+
+            <div class="numbers" id="numberDisplay">- - - - - -</div>
+            <div class="average" id="averageDisplay">Average: -</div>
+            
+            <div class="stats-box" id="statsDisplay">
+                Click Generate to see the stats!
+            </div>
+
+            <div id="generatorBadge" class="badge badge-initial">Click Generate to start!</div>
+
+            <br>
+            <button class="btn-generate" onclick="generateAndShow()">Generate Numbers</button>
         </div>
 
-        <div class="numbers" id="numberDisplay">- - - - - -</div>
-        <div class="average" id="averageDisplay">Average: -</div>
-        
-        <div class="stats-box" id="statsDisplay">
-            Click Generate to see the stats!
+        <!-- RIGHT PANEL: Live Benchmark & statistics -->
+        <div class="benchmark-card">
+            <div class="header-row">
+                <h2>📊 Live Benchmark</h2>
+            </div>
+            
+            <div class="benchmark-controls">
+                <div class="control-row">
+                    <label for="benchmarkRuns">Iterations:</label>
+                    <select id="benchmarkRuns" class="benchmark-select">
+                        <option value="500">500 runs</option>
+                        <option value="1000" selected>1,000 runs</option>
+                        <option value="5000">5,000 runs</option>
+                        <option value="10000">10,000 runs</option>
+                    </select>
+                </div>
+                <button class="btn-benchmark" id="startBenchmarkBtn" onclick="runBenchmark()">Run Stress Test</button>
+            </div>
+
+            <!-- Custom Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBarFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Ready to benchmark</div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Time</div>
+                    <div class="stat-value" id="statTime">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Retries</div>
+                    <div class="stat-value" id="statAvgRetries">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Max Retries</div>
+                    <div class="stat-value" id="statMaxRetries">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Draws</div>
+                    <div class="stat-value" id="statTotalDraws">-</div>
+                </div>
+            </div>
+
+            <!-- Lottery Analytics Grid -->
+            <div class="analytics-container" id="analyticsContainer" style="display: none;">
+                <div class="analytics-title">🎯 Stress Test Analytics</div>
+                <div class="analytics-row-data">
+                    <div class="analytics-card">
+                        <span class="analytics-label">🔥 Hot</span>
+                        <div class="analytics-vals" id="hotNumbers">-</div>
+                    </div>
+                    <div class="analytics-card">
+                        <span class="analytics-label">❄️ Cold</span>
+                        <div class="analytics-vals" id="coldNumbers">-</div>
+                    </div>
+                    <div class="analytics-card">
+                        <span class="analytics-label">⏳ Overdue</span>
+                        <div class="analytics-vals" id="overdueNumbers">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="chart-container">
+                <canvas id="distributionChart"></canvas>
+            </div>
         </div>
-
-        <div id="generatorBadge" class="badge badge-initial">Click Generate to start!</div>
-
-        <br>
-        <button class="btn-generate" onclick="generateAndShow()">Generate Numbers</button>
     </div>
 
     <script>
@@ -465,7 +858,165 @@
             const newTheme = theme === "dark" ? "light" : "dark";
             document.documentElement.setAttribute("data-theme", newTheme);
             localStorage.setItem("theme", newTheme);
+            
+            // Dynamically update Chart styling to match theme colors
+            if (chartInstance) {
+                const isDark = newTheme === "dark";
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
+                const textColor = isDark ? '#94a3b8' : '#64748b';
+                
+                chartInstance.options.scales.x.grid.color = gridColor;
+                chartInstance.options.scales.x.ticks.color = textColor;
+                chartInstance.options.scales.x.title.color = textColor;
+                
+                chartInstance.options.scales.y.grid.color = gridColor;
+                chartInstance.options.scales.y.ticks.color = textColor;
+                chartInstance.options.scales.y.title.color = textColor;
+                
+                chartInstance.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.9)';
+                chartInstance.options.plugins.tooltip.titleColor = isDark ? '#f8fafc' : '#1e293b';
+                chartInstance.options.plugins.tooltip.bodyColor = isDark ? '#94a3b8' : '#64748b';
+                chartInstance.options.plugins.tooltip.borderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                
+                chartInstance.update();
+            }
         });
+
+        // ==========================================
+        // ENTROPY COLLECTOR (Touch & Draw Pad)
+        // ==========================================
+        const canvas = document.getElementById("entropyCanvas");
+        const ctx = canvas.getContext("2d");
+        const progressDisplay = document.getElementById("entropyProgress");
+        
+        let isDrawing = false;
+        let points = [];
+        let collectedEntropyString = "";
+        const maxPoints = 50; // Points required for 100%
+        
+        function resizeCanvas() {
+            if (!canvas) return;
+            const temp = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            ctx.putImageData(temp, 0, 0);
+        }
+        
+        window.addEventListener("resize", resizeCanvas);
+        setTimeout(resizeCanvas, 100);
+
+        let trail = [];
+
+        function addPoint(x, y) {
+            if (points.length >= maxPoints) return;
+            
+            const timestamp = performance.now();
+            points.push({ x, y, t: timestamp });
+            collectedEntropyString += `${Math.round(x)},${Math.round(y)},${Math.round(timestamp)}|`;
+            
+            const pct = Math.round((points.length / maxPoints) * 100);
+            progressDisplay.innerText = pct + "%";
+            
+            if (points.length >= maxPoints) {
+                progressDisplay.innerText = "READY!";
+                progressDisplay.style.color = "#10b981";
+                canvas.classList.add("ready");
+            }
+        }
+
+        function drawTrail() {
+            if (!canvas || !ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (points.length === 0) {
+                ctx.fillStyle = "rgba(100, 116, 139, 0.5)";
+                ctx.font = "600 13px Outfit";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("Swipe finger here to collect entropy", canvas.width / 2, canvas.height / 2);
+            }
+
+            trail = trail.filter(p => p.age < 15);
+            for (let i = 0; i < trail.length; i++) {
+                const p = trail[i];
+                p.age++;
+                const opacity = 1 - (p.age / 15);
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6 * opacity, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(139, 92, 246, ${0.4 * opacity})`;
+                ctx.fill();
+                
+                if (i > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+                    ctx.lineTo(p.x, p.y);
+                    ctx.strokeStyle = `rgba(168, 85, 247, ${0.6 * opacity})`;
+                    ctx.lineWidth = 4 * opacity;
+                    ctx.stroke();
+                }
+            }
+            
+            requestAnimationFrame(drawTrail);
+        }
+        
+        requestAnimationFrame(drawTrail);
+
+        canvas.addEventListener("mousedown", (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            trail.push({ x, y, age: 0 });
+            addPoint(x, y);
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            trail.push({ x, y, age: 0 });
+            addPoint(x, y);
+        });
+
+        window.addEventListener("mouseup", () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener("touchstart", (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            trail.push({ x, y, age: 0 });
+            addPoint(x, y);
+        });
+
+        canvas.addEventListener("touchmove", (e) => {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            trail.push({ x, y, age: 0 });
+            addPoint(x, y);
+        }, { passive: false });
+
+        canvas.addEventListener("touchend", () => {
+            isDrawing = false;
+        });
+
+        function resetEntropyPad() {
+            points = [];
+            collectedEntropyString = "";
+            progressDisplay.innerText = "0%";
+            progressDisplay.style.color = "#8b5cf6";
+            canvas.classList.remove("ready");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
 
         // ==========================================
         // PRESETS MANAGEMENT
@@ -492,7 +1043,7 @@
         }
 
         // ==========================================
-        // GENERATOR LOGIC
+        // SINGLE GENERATOR LOGIC
         // ==========================================
         document.getElementById("inputA2").addEventListener("input", function() {
             let a2Value = Number(this.value);
@@ -509,7 +1060,10 @@
             return array[0] % 2; // Returns 0 or 1
         }
 
-        function getNumber(min, max, mode) {
+        function getNumber(min, max, mode, prng = null) {
+            if (prng) {
+                return Math.floor(prng() * (max - min + 1)) + min;
+            }
             if (mode === 0) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             } else {
@@ -519,7 +1073,19 @@
             }
         }
 
-        function generateAndShow() {
+        // ==========================================
+        // SEEDED PRNG (Mulberry32)
+        // ==========================================
+        function mulberry32(a) {
+            return function() {
+                let t = a += 0x6D2B79F5;
+                t = Math.imul(t ^ (t >>> 15), t | 1);
+                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        async function generateAndShow() {
             const A1 = Number(document.getElementById("inputA1").value);
             let A2 = Number(document.getElementById("inputA2").value);
             
@@ -540,21 +1106,39 @@
             const B2 = B1 + step; 
             const B3 = B1 - step; 
 
-            const mode = pickGeneratorMode();
+            // Check if finger entropy is fully gathered
+            const isFingerEntropyReady = points.length >= maxPoints;
+            let prngInstance = null;
             const badge = document.getElementById("generatorBadge");
-            if (mode === 0) {
-                badge.innerText = "🎲 Used: Math.random()";
-                badge.className = "badge badge-math";
+
+            if (isFingerEntropyReady) {
+                // Compute SHA-256 hash using the Web Crypto API
+                const encoder = new TextEncoder();
+                const data = encoder.encode(collectedEntropyString);
+                const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
+                const hashArray = new Uint8Array(hashBuffer);
+                
+                // Convert first 4 bytes of hash to a 32-bit seed
+                const seed = (hashArray[0] << 24) | (hashArray[1] << 16) | (hashArray[2] << 8) | hashArray[3];
+                
+                prngInstance = mulberry32(seed);
+                
+                badge.innerText = "✍️ Used: Finger Entropy (SHA-256)";
+                badge.className = "badge badge-entropy";
             } else {
-                badge.innerText = "🔒 Used: Crypto (Secure)";
-                badge.className = "badge badge-crypto";
+                const mode = pickGeneratorMode();
+                if (mode === 0) {
+                    badge.innerText = "🎲 Used: Math.random()";
+                    badge.className = "badge badge-math";
+                } else {
+                    badge.innerText = "🔒 Used: Crypto (Secure)";
+                    badge.className = "badge badge-crypto";
+                }
             }
 
             let isValid = false;
             let numbers = [];
             let average = 0;
-            
-            // Retry counter
             let retryCount = 0;
 
             // Keep trying until we find a perfect match
@@ -563,7 +1147,7 @@
                 numbers = [];
                 
                 for (let i = 0; i < totalNumbers; i++) {
-                    numbers.push(getNumber(1, A1, mode));
+                    numbers.push(getNumber(1, A1, 0, prngInstance));
                 }
 
                 const uniqueNumbers = new Set(numbers);
@@ -577,9 +1161,14 @@
                         isValid = true; // We found a winner!
                     }
                 }
+
+                if (retryCount > 10000) {
+                    alert("Seeded generation took too many loops. Try swiping a different drawing pattern!");
+                    break;
+                }
             }
 
-            // Sort the numbers from low to high
+            // Sort numbers low to high
             numbers.sort((a, b) => a - b);
 
             // Calculate stats
@@ -591,14 +1180,12 @@
             for (let i = 0; i < numbers.length; i++) {
                 let num = numbers[i];
                 
-                // Odd vs Even
                 if (num % 2 === 0) {
                     evenCount++;
                 } else {
                     oddCount++;
                 }
 
-                // Low vs High (B1 is the dividing line)
                 if (num <= B1) {
                     lowCount++;
                 } else {
@@ -606,16 +1193,309 @@
                 }
             }
 
-            // Update webpage elements
+            // Update UI elements
             document.getElementById("numberDisplay").innerText = numbers.join(", ");
             document.getElementById("averageDisplay").innerText = "Average: " + average;
             
-            // Modern styled inner rows for stats display
             document.getElementById("statsDisplay").innerHTML = 
                 `<div class="stats-row"><span>🎯 Odds vs Evens:</span><strong>${oddCount} Odd / ${evenCount} Even</strong></div>` +
                 `<div class="stats-row"><span>⚖️ Low vs High:</span><strong>${lowCount} Low / ${highCount} High</strong></div>` +
                 `<div class="stats-row"><span>🔄 Total Loops:</span><strong>${retryCount} tries</strong></div>`;
+
+            // Reset the entropy pad after successfully generating
+            if (isFingerEntropyReady) {
+                resetEntropyPad();
+            }
         }
+
+        // ==========================================
+        // BENCHMARKING & CHARTING LOGIC
+        // ==========================================
+        let chartInstance = null;
+        let benchmarkInProgress = false;
+
+        function initChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'All Candidate Averages',
+                            data: [],
+                            borderColor: '#10b981',
+                            borderWidth: 2.5,
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                            titleColor: isDark ? '#f8fafc' : '#1e293b',
+                            bodyColor: isDark ? '#94a3b8' : '#64748b',
+                            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1,
+                            titleFont: { family: 'Outfit', weight: 'bold' },
+                            bodyFont: { family: 'Outfit' }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    family: 'Outfit'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Average Value',
+                                color: textColor,
+                                font: {
+                                    family: 'Outfit',
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    family: 'Outfit'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Frequency (Hits)',
+                                color: textColor,
+                                font: {
+                                    family: 'Outfit',
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartData(A1, allFreq, acceptedFreq) {
+            const labels = [];
+            const allData = [];
+            const acceptedData = [];
+            
+            for (let i = 1; i <= A1; i++) {
+                labels.push(i);
+                allData.push(allFreq[i]);
+                acceptedData.push(acceptedFreq[i]);
+            }
+            
+            chartInstance.data.labels = labels;
+            chartInstance.data.datasets[0].data = allData;
+            
+            // Add/update second series for the filtered/accepted averages (hump)
+            if (chartInstance.data.datasets.length < 2) {
+                chartInstance.data.datasets.push({
+                    label: 'Accepted Averages (Target Region)',
+                    data: acceptedData,
+                    borderColor: '#3b82f6',
+                    borderWidth: 2.5,
+                    backgroundColor: 'rgba(59, 130, 246, 0.35)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                });
+            } else {
+                chartInstance.data.datasets[1].data = acceptedData;
+            }
+            
+            chartInstance.update('none'); // Update immediately without animation triggers for speed
+        }
+
+        function runBenchmark() {
+            if (benchmarkInProgress) return;
+            
+            const A1 = Number(document.getElementById("inputA1").value);
+            let A2 = Number(document.getElementById("inputA2").value);
+            
+            if (A2 > 5) {
+                A2 = 5;
+                document.getElementById("inputA2").value = 5;
+            }
+            
+            const totalNumbers = A2 * 2;
+
+            if (A1 < totalNumbers) {
+                alert("Oops! The Max Number (A1) must be at least " + totalNumbers + " so we can pick " + totalNumbers + " unique numbers.");
+                return;
+            }
+
+            const B1 = Math.trunc(A1 / 2); 
+            const step = Math.round(A1 / (totalNumbers + 1)); 
+            const B2 = B1 + step; 
+            const B3 = B1 - step; 
+
+            // Enable loading UI and lock inputs
+            benchmarkInProgress = true;
+            document.getElementById("startBenchmarkBtn").disabled = true;
+            document.getElementById("startBenchmarkBtn").innerText = "Simulating...";
+            document.getElementById("progressContainer").classList.add("active");
+            
+            // Hide previous analytics
+            document.getElementById("analyticsContainer").style.display = "none";
+            
+            const totalRuns = Number(document.getElementById("benchmarkRuns").value);
+            let currentRun = 0;
+            let totalRetries = 0;
+            let maxRetries = 0;
+            let totalCandidates = 0;
+            
+            // Track frequencies of candidate averages and accepted averages
+            const allAveragesFreq = Array(A1 + 1).fill(0);
+            const acceptedAveragesFreq = Array(A1 + 1).fill(0);
+            
+            // Track frequency and last seen index of each individual number (1 to A1)
+            const numberCounts = Array(A1 + 1).fill(0);
+            const numberLastSeen = Array(A1 + 1).fill(-1);
+            
+            const startTime = performance.now();
+            const chunkSize = Math.max(10, Math.floor(totalRuns / 25)); // Run in 25 ticks to give smooth UI feedback
+
+            function runChunk() {
+                const chunkEnd = Math.min(currentRun + chunkSize, totalRuns);
+                
+                for (; currentRun < chunkEnd; currentRun++) {
+                    const mode = pickGeneratorMode();
+                    let isValid = false;
+                    let retriesForThisRun = 0;
+                    
+                    while (!isValid) {
+                        retriesForThisRun++;
+                        totalCandidates++;
+                        
+                        const numbers = [];
+                        for (let i = 0; i < totalNumbers; i++) {
+                            numbers.push(getNumber(1, A1, mode));
+                        }
+                        
+                        const uniqueNumbers = new Set(numbers);
+                        const allUnique = uniqueNumbers.size === totalNumbers;
+                        
+                        if (allUnique) {
+                            const sum = numbers.reduce((total, cur) => total + cur, 0);
+                            const avg = Math.round(sum / numbers.length);
+                            
+                            // Log all unique candidate averages
+                            if (avg >= 1 && avg <= A1) {
+                                allAveragesFreq[avg]++;
+                            }
+                            
+                            if (avg >= B3 && avg <= B2) {
+                                isValid = true;
+                                acceptedAveragesFreq[avg]++;
+                                
+                                // Track individual numbers drawn
+                                for (let j = 0; j < numbers.length; j++) {
+                                    const num = numbers[j];
+                                    numberCounts[num]++;
+                                    numberLastSeen[num] = currentRun;
+                                }
+                            }
+                        }
+                    }
+                    
+                    totalRetries += retriesForThisRun;
+                    if (retriesForThisRun > maxRetries) {
+                        maxRetries = retriesForThisRun;
+                    }
+                }
+                
+                // Update stats UI
+                const elapsed = performance.now() - startTime;
+                document.getElementById("statTime").innerText = Math.round(elapsed) + " ms";
+                document.getElementById("statAvgRetries").innerText = (totalRetries / currentRun).toFixed(2);
+                document.getElementById("statMaxRetries").innerText = maxRetries;
+                document.getElementById("statTotalDraws").innerText = totalCandidates.toLocaleString();
+                
+                // Update Progress bar
+                const pct = Math.round((currentRun / totalRuns) * 100);
+                document.getElementById("progressBarFill").style.width = pct + "%";
+                document.getElementById("progressText").innerText = `Progress: ${currentRun.toLocaleString()} / ${totalRuns.toLocaleString()} (${pct}%)`;
+                
+                // Refresh chart distribution data
+                updateChartData(A1, allAveragesFreq, acceptedAveragesFreq);
+
+                if (currentRun < totalRuns) {
+                    // Feed control back to browser thread to keep UI smooth
+                    requestAnimationFrame(runChunk);
+                } else {
+                    // Benchmark completed
+                    benchmarkInProgress = false;
+                    document.getElementById("startBenchmarkBtn").disabled = false;
+                    document.getElementById("startBenchmarkBtn").innerText = "Run Stress Test";
+                    document.getElementById("progressText").innerText = "Stress Test Completed!";
+                    
+                    // Compile stats for Hot, Cold, and Overdue Numbers
+                    const numStats = [];
+                    for (let i = 1; i <= A1; i++) {
+                        const count = numberCounts[i];
+                        const lastSeen = numberLastSeen[i];
+                        const gap = lastSeen === -1 ? totalRuns : (totalRuns - 1 - lastSeen);
+                        numStats.push({ num: i, count, gap });
+                    }
+                    
+                    const hot = [...numStats].sort((a, b) => b.count - a.count).slice(0, 5);
+                    const cold = [...numStats].sort((a, b) => a.count - b.count).slice(0, 5);
+                    const overdue = [...numStats].sort((a, b) => b.gap - a.gap).slice(0, 5);
+                    
+                    document.getElementById("hotNumbers").innerHTML = hot.map(x => 
+                        `<span class="number-badge">${x.num} <small style="opacity: 0.6; font-size: 8px; font-weight: 500;">(${x.count}x)</small></span>`
+                    ).join("");
+                    document.getElementById("coldNumbers").innerHTML = cold.map(x => 
+                        `<span class="number-badge">${x.num} <small style="opacity: 0.6; font-size: 8px; font-weight: 500;">(${x.count}x)</small></span>`
+                    ).join("");
+                    document.getElementById("overdueNumbers").innerHTML = overdue.map(x => 
+                        `<span class="number-badge">${x.num} <small style="opacity: 0.6; font-size: 8px; font-weight: 500;">(gap:${x.gap})</small></span>`
+                    ).join("");
+                    
+                    document.getElementById("analyticsContainer").style.display = "block";
+                }
+            }
+            
+            // Begin loop
+            requestAnimationFrame(runChunk);
+        }
+
+        // Initialize Chart on DOM Load
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+        });
     </script>
 </body>
 </html>
