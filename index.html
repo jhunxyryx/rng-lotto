@@ -4,97 +4,436 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xyryx's Random Number Generator</title>
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --font-family: 'Outfit', sans-serif;
+            
+            /* Light Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            --blob-1: rgba(147, 197, 253, 0.45);
+            --blob-2: rgba(196, 181, 253, 0.45);
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --input-border: rgba(203, 213, 225, 0.8);
+            --input-focus: #3b82f6;
+            --btn-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --btn-hover: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --stats-bg: rgba(254, 243, 199, 0.5);
+            --stats-border: rgba(252, 211, 77, 0.3);
+            --stats-text: #92400e;
+            --average-text: #16a34a;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-gradient: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
+            --blob-1: rgba(30, 58, 138, 0.4);
+            --blob-2: rgba(88, 28, 135, 0.4);
+            --glass-bg: rgba(15, 23, 42, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(51, 65, 85, 0.8);
+            --input-focus: #60a5fa;
+            --btn-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --btn-hover: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            --stats-bg: rgba(30, 41, 59, 0.5);
+            --stats-border: rgba(51, 65, 85, 0.3);
+            --stats-text: #fef08a;
+            --average-text: #4ade80;
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f8ff;
-            padding: 50px;
+            font-family: var(--font-family);
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
         }
-        h1 { color: #333; }
+
+        /* Ambient background blobs to enhance glassmorphism */
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            transition: background 0.5s ease;
+        }
+        
+        .blob-1 {
+            top: 15%;
+            left: 15%;
+            width: 350px;
+            height: 350px;
+            background: var(--blob-1);
+            animation: float1 15s infinite alternate;
+        }
+        
+        .blob-2 {
+            bottom: 15%;
+            right: 15%;
+            width: 400px;
+            height: 400px;
+            background: var(--blob-2);
+            animation: float2 15s infinite alternate;
+        }
+        
+        @keyframes float1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, 40px) scale(1.1); }
+        }
+        
+        @keyframes float2 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-50px, -60px) scale(0.9); }
+        }
+
+        /* Glassmorphic Container */
         .box {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            display: inline-block;
-            max-width: 500px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* Header Layout */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-row h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Sleek Theme Toggle Button */
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+            background: var(--glass-border);
+            border-color: var(--input-focus);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-main);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .sun-icon { display: block; }
+        [data-theme="dark"] .moon-icon { display: none; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
+
+        /* Quick Presets Grid */
+        .presets-label {
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .presets-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: var(--font-family);
+            outline: none;
+            flex: 1 1 calc(33.333% - 10px);
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .preset-btn:hover {
+            background: var(--btn-primary);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .preset-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Inputs Box styling */
         .inputs {
             margin-bottom: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-radius: 10px;
+            padding: 20px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: all 0.3s ease;
         }
-        .inputs label { font-weight: bold; margin-right: 10px; }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inputs label {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+
         .inputs input {
-            width: 60px;
-            padding: 5px;
+            width: 80px;
+            padding: 8px 12px;
             font-size: 16px;
             text-align: center;
-            border: 2px solid #ccc;
-            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: var(--font-family);
+            outline: none;
+            transition: all 0.2s ease;
         }
+
+        .inputs input:focus {
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Flash animation for preset click */
+        @keyframes flash {
+            0% { background-color: #3b82f6; color: white; border-color: transparent; }
+            100% { background-color: var(--input-bg); color: var(--text-main); }
+        }
+        .highlight-flash {
+            animation: flash 0.5s ease-out;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Numbers Display styling */
         .numbers {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-            margin: 20px 0;
-            letter-spacing: 5px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #3b82f6;
+            margin: 25px 0 15px 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+            transition: all 0.3s ease;
         }
+
         .average {
-            font-size: 20px;
-            color: #28a745;
-            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--average-text);
+            margin-bottom: 20px;
         }
-        /* NEW: Style for the Stats Box */
+
+        /* Stats Box */
         .stats-box {
             margin-top: 20px;
-            padding: 15px;
-            background-color: #fff3cd; /* Light yellow background */
-            border: 2px solid #ffeeba;
-            border-radius: 10px;
-            font-size: 16px;
-            color: #856404;
+            padding: 18px;
+            background-color: var(--stats-bg);
+            border: 1px solid var(--stats-border);
+            border-radius: 16px;
+            font-size: 15px;
+            color: var(--stats-text);
             line-height: 1.6;
+            text-align: left;
+            transition: all 0.3s ease;
         }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .stats-row:last-child {
+            margin-bottom: 0;
+            border-top: 1px dashed var(--stats-border);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        /* Badges */
         .badge {
             display: inline-block;
-            padding: 5px 15px;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 700;
             color: white;
-            margin-top: 15px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
         }
-        .badge-math { background-color: #ffc107; color: #333; }
-        .badge-crypto { background-color: #6f42c1; }
-        button {
-            background-color: #007bff;
+        
+        .badge-math {
+            background-color: #f59e0b;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
+        }
+        
+        .badge-crypto {
+            background-color: #8b5cf6;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.25);
+        }
+
+        .badge-initial {
+            background-color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        /* Primary Action Button */
+        .btn-generate {
+            width: 100%;
+            background: var(--btn-primary);
             color: white;
             border: none;
             padding: 15px 30px;
             font-size: 18px;
-            border-radius: 8px;
+            font-weight: 700;
+            border-radius: 14px;
             cursor: pointer;
             margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: var(--font-family);
+            outline: none;
         }
-        button:hover { background-color: #0056b3; }
+
+        .btn-generate:hover {
+            background: var(--btn-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-generate:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
 
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
     <div class="box">
-        <h1>🎲 Number Generator</h1>
+        <div class="header-row">
+            <h1>🎲 RNG Pro</h1>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
+        </div>
         
+        <div class="presets-label">Lotto Presets</div>
+        <div class="presets-container">
+            <button class="preset-btn" onclick="applyPreset(42, 3)">6/42 Preset</button>
+            <button class="preset-btn" onclick="applyPreset(45, 3)">6/45 Preset</button>
+            <button class="preset-btn" onclick="applyPreset(49, 3)">6/49 Preset</button>
+            <button class="preset-btn" onclick="applyPreset(55, 3)">6/55 Preset</button>
+            <button class="preset-btn" onclick="applyPreset(58, 3)">6/58 Preset</button>
+        </div>
+
         <div class="inputs">
-            <label>Max Number:</label>
-            <input type="number" id="inputA1" value="42" min="2">
-            <br>
-            <label style="margin-left: 20px;">Half Count:</label>
-            <input type="number" id="inputA2" value="3" min="1" max="5">
+            <div class="input-row">
+                <label for="inputA1">Max Number:</label>
+                <input type="number" id="inputA1" value="42" min="2">
+            </div>
+            <div class="input-row">
+                <label for="inputA2">Half Count:</label>
+                <input type="number" id="inputA2" value="3" min="1" max="5">
+            </div>
             
-            <p style="font-size: 14px; color: #666; margin-top: 10px;">
+            <p class="info-text">
                 (This will generate <strong id="totalCountDisplay">6</strong> unique numbers)
             </p>
         </div>
@@ -102,22 +441,59 @@
         <div class="numbers" id="numberDisplay">- - - - - -</div>
         <div class="average" id="averageDisplay">Average: -</div>
         
-        <!-- NEW: This is where our new stats will show up! -->
         <div class="stats-box" id="statsDisplay">
             Click Generate to see the stats!
         </div>
 
-        <div id="generatorBadge" class="badge">Click Generate to start!</div>
+        <div id="generatorBadge" class="badge badge-initial">Click Generate to start!</div>
 
         <br>
-        <button onclick="generateAndShow()">Generate Numbers</button>
+        <button class="btn-generate" onclick="generateAndShow()">Generate Numbers</button>
     </div>
 
     <script>
         // ==========================================
-        // THIS IS THE JAVASCRIPT (The Brain of the page)
+        // THEME MANAGEMENT (Light / Dark Mode)
         // ==========================================
+        const themeToggle = document.getElementById("themeToggle");
+        const currentTheme = localStorage.getItem("theme") || "light";
+        
+        document.documentElement.setAttribute("data-theme", currentTheme);
+        
+        themeToggle.addEventListener("click", () => {
+            const theme = document.documentElement.getAttribute("data-theme");
+            const newTheme = theme === "dark" ? "light" : "dark";
+            document.documentElement.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+        });
 
+        // ==========================================
+        // PRESETS MANAGEMENT
+        // ==========================================
+        function applyPreset(max, half) {
+            const inputA1 = document.getElementById("inputA1");
+            const inputA2 = document.getElementById("inputA2");
+            
+            inputA1.value = max;
+            inputA2.value = half;
+            
+            // Dispatch input event to trigger A2 listener below
+            const event = new Event('input', { bubbles: true });
+            inputA2.dispatchEvent(event);
+            
+            // Trigger feedback animation on input fields
+            inputA1.classList.add('highlight-flash');
+            inputA2.classList.add('highlight-flash');
+            
+            setTimeout(() => {
+                inputA1.classList.remove('highlight-flash');
+                inputA2.classList.remove('highlight-flash');
+            }, 500);
+        }
+
+        // ==========================================
+        // GENERATOR LOGIC
+        // ==========================================
         document.getElementById("inputA2").addEventListener("input", function() {
             let a2Value = Number(this.value);
             if (a2Value > 5) {
@@ -178,12 +554,12 @@
             let numbers = [];
             let average = 0;
             
-            // NEW: Start our retry counter at zero
+            // Retry counter
             let retryCount = 0;
 
-            // 4. Keep trying until we find a perfect match
+            // Keep trying until we find a perfect match
             while (!isValid) {
-                retryCount++; // Add 1 to the counter every time the loop runs!
+                retryCount++;
                 numbers = [];
                 
                 for (let i = 0; i < totalNumbers; i++) {
@@ -206,28 +582,23 @@
             // Sort the numbers from low to high
             numbers.sort((a, b) => a - b);
 
-            // ==========================================
-            // NEW: Calculate our Stats!
-            // ==========================================
+            // Calculate stats
             let oddCount = 0;
             let evenCount = 0;
             let lowCount = 0;
             let highCount = 0;
 
-            // Look at every number in our winning list
             for (let i = 0; i < numbers.length; i++) {
                 let num = numbers[i];
                 
-                // 1. Check Odd vs Even
-                // The "%" symbol gets the remainder. If a number divided by 2 has 0 remainder, it's even!
+                // Odd vs Even
                 if (num % 2 === 0) {
                     evenCount++;
                 } else {
                     oddCount++;
                 }
 
-                // 2. Check Low vs High
-                // We use B1 (the middle number) as the dividing line.
+                // Low vs High (B1 is the dividing line)
                 if (num <= B1) {
                     lowCount++;
                 } else {
@@ -235,17 +606,16 @@
                 }
             }
 
-            // 3. Update the webpage with all our new info!
+            // Update webpage elements
             document.getElementById("numberDisplay").innerText = numbers.join(", ");
             document.getElementById("averageDisplay").innerText = "Average: " + average;
             
-            // We use \n or <br> to make a new line in HTML
+            // Modern styled inner rows for stats display
             document.getElementById("statsDisplay").innerHTML = 
-                "🎯 <strong>Odds:</strong> " + oddCount + " | <strong>Evens:</strong> " + evenCount + "<br>" +
-                "⚖️ <strong>Low:</strong> " + lowCount + " | <strong>High:</strong> " + highCount + "<br>" +
-                "🔄 <strong>Retries:</strong> " + retryCount + " tries!";
+                `<div class="stats-row"><span>🎯 Odds vs Evens:</span><strong>${oddCount} Odd / ${evenCount} Even</strong></div>` +
+                `<div class="stats-row"><span>⚖️ Low vs High:</span><strong>${lowCount} Low / ${highCount} High</strong></div>` +
+                `<div class="stats-row"><span>🔄 Total Loops:</span><strong>${retryCount} tries</strong></div>`;
         }
     </script>
-
 </body>
 </html>
